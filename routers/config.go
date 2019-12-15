@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
+	
 	data "github.com/mazeForGit/WordlistStorage/data"
 )
 func ConfigGET(c *gin.Context) {
@@ -13,6 +15,7 @@ func ConfigPOST(c *gin.Context) {
 	var s data.ResponseStatus
 	var err error
 	
+	log.Info("ConfigPOST .. before bind")
 	fmt.Println("ConfigPOST .. before bind")
 	err = c.BindJSON(&data.GlobalConfig)
 	if err != nil {
