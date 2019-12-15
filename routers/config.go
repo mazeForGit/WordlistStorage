@@ -8,8 +8,7 @@ import (
 	
 	data "github.com/mazeForGit/WordlistStorage/data"
 )
-func ConfigGET(c *gin.Context) {
-	log.Info("ConfigGET")
+func ConfigGET(c *gin.Context) 
 	fmt.Println("ConfigGET")
 	
 	c.JSON(200, data.GlobalConfig)

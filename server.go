@@ -32,6 +32,7 @@ func main() {
 	router.NoRoute(routers.NotFoundError)
 	router.GET("/500", routers.InternalServerError)
 	router.GET("/health", routers.HealthGET)
+	router.POST("/health", routers.HealthPOST)
 
 	// global config
 	router.GET("/config", routers.ConfigGET)
