@@ -7,7 +7,9 @@ import (
 	"github.com/gin-gonic/gin"
 	data "github.com/mazeForGit/WordlistStorage/data"
 )
-
+func WordListGET(c *gin.Context) {	
+	c.JSON(200, data.GlobalWordList)
+}
 func WordListPUT(c *gin.Context) {
 	var s data.ResponseStatus
 
