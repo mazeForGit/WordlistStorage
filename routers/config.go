@@ -9,6 +9,9 @@ import (
 	data "github.com/mazeForGit/WordlistStorage/data"
 )
 func ConfigGET(c *gin.Context) {
+	log.Info("ConfigGET")
+	fmt.Println("ConfigGET")
+	
 	c.JSON(200, data.GlobalConfig)
 }
 func ConfigPOST(c *gin.Context) {
