@@ -42,5 +42,6 @@ func main() {
 	router.PUT("/wordlist", routers.WordListPUT)
 	router.GET("/result", routers.ResultGET)
 
+	log.Info("Starting server on port " + port())
 	router.Run(port())
 }
