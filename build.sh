@@ -12,7 +12,7 @@ echo "get go dependencies"
 go get github.com/gin-gonic/gin
 go get github.com/gin-contrib/static
 go get github.com/sirupsen/logrus
-go get github.com/mazeForGit/Wordlist
+go get github.com/mazeForGit/WordlistStorage
 
 echo "create the application binary wich is referenced by Procfile"
 go build -o bin/application server.go
