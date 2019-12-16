@@ -22,8 +22,22 @@ func ResultGET(c *gin.Context) {
 		domain = c.Request.URL.Query().Get("domain")
 	}
 	
-	if test != "" && domain != "" {
-		c.JSON(200, data.ResultOnSession(test, domain))
+	if test == "" && domain != "" {
+		wl, err := data.ResultOnSession(test, domain)
+		if err != nil {
+			s = data.ResponseStatus{Code: 422, Text: "unknwon domain = " + domain}
+			c.JSON(422, s)
+			return
+		}
+		c.JSON(200, wl)
+	} else if test != "" && domain != "" {
+		r, err := data.ResultOnSessionByTest(test, domain)
+		if err != nil {
+			s = data.ResponseStatus{Code: 422, Text: "unknwon domain = " + domain}
+			c.JSON(422, s)
+			return
+		}
+		c.JSON(200, r)
 	} else {
 		s = data.ResponseStatus{Code: 422, Text: "missing data"}
 		c.JSON(422, s)

@@ -37,6 +37,7 @@ func main() {
 	router.GET("/config", routers.ConfigGET)
 	router.POST("/config", routers.ConfigPOST)
 	router.GET("/wordliststorage", routers.WordListStorageGET)
+	router.PUT("/wordliststorage", routers.WordListStoragePUT)
 	
 	// session based
 	router.GET("/wordlist", routers.WordListGET)

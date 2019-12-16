@@ -63,14 +63,56 @@ var GlobalWordList WordList
 var GlobalWordListStorage []WordList
 var GlobalWordListResult Result
 
-func ResultOnSession(test string, domain string) Result {
+func RebuildWordListResult() {
+	fmt.Println("RebuildWordListResult")
+	
+	//fmt.Println("len(GlobalWordListStorage) = " + strconv.Itoa(len(GlobalWordListStorage)))
+	for i := 0; i < len(GlobalWordListStorage); i++ {
+		//fmt.Println(" len(GlobalWordListStorage[i].Words) = " + strconv.Itoa(len(GlobalWordListStorage[i].Words)))
+		for j := 0; j < len(GlobalWordListStorage[i].Words); j++ {
+			for k := 0; k < len(GlobalWordList.Words); k++ {
+				if GlobalWordListStorage[i].Words[j].Name == GlobalWordList.Words[k].Name {
+					//fmt.Println("name = " + GlobalWordListStorage[i].Words[j].Name + ", occurance = " + strconv.Itoa(GlobalWordListStorage[i].Words[j].Occurance))
+					GlobalWordList.Words[k].Count++
+					GlobalWordList.Words[k].Occurance += GlobalWordListStorage[i].Words[j].Occurance
+					break
+				}
+			}
+		}
+	}	
+}
+func ResultOnSession(test string, domain string) ([]Word, error) {
+	fmt.Println("ResultOnSession domain = " + domain)
+	
+	sData, err := GetWordListFromStorage(domain)
+	if err != nil {
+		return nil, errors.New("no item")
+	}
+	gwl := GetWordsList(test)
+	
+	//fmt.Println(sData)
+	lwl := sData.Words
+	
+	for i := 0; i < len(lwl); i++ {
+		for j := 0; j < len(gwl); j++ {
+			if lwl[i].Name == gwl[j].Name {
+				if gwl[j].Occurance > 0 && gwl[j].Count > 0 {
+					lwl[i].Count = gwl[j].Occurance / gwl[j].Count
+				}
+			}
+		}
+	}
+						
+	return lwl, nil
+}
+func ResultOnSessionByTest(test string, domain string) (Result, error) {
 	fmt.Println("ResultOnSession test = " + test + ", domain = " + domain)
 	
 	gwl := GetWordsList(test)
 	PrepareResultsBasedOnTest(test, gwl)
 	sData, err := GetWordListFromStorage(domain)
 	if err != nil {
-		return GlobalWordListResult
+		return GlobalWordListResult, errors.New("no item")
 	}
 	
 	//fmt.Println(sData)
@@ -109,7 +151,7 @@ func ResultOnSession(test string, domain string) Result {
 		} 
 	}
 	
-	return GlobalWordListResult
+	return GlobalWordListResult, nil
 }
 func PrepareResultsBasedOnTest(test string, gwl []Word) {
 	//fmt.Println("PrepareResultsBasedOnTest")
