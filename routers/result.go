@@ -2,13 +2,16 @@ package routers
 
 import (
 	//"strconv"
-	//"fmt"
+	"fmt"
 	
 	"github.com/gin-gonic/gin"
 	data "github.com/mazeForGit/WordlistStorage/data"
 )
 
 func ResultGET(c *gin.Context) {
+
+	c.Header("Content-Type", "application/json")
+		
 	var s data.ResponseStatus
 	var vars map[string][]string
 	vars = c.Request.URL.Query()
@@ -29,6 +32,8 @@ func ResultGET(c *gin.Context) {
 			c.JSON(422, s)
 			return
 		}
+		
+		fmt.Println(wl)
 		c.JSON(200, wl)
 	} else if test != "" && domain != "" {
 		r, err := data.ResultOnSessionByTest(test, domain)
@@ -37,6 +42,8 @@ func ResultGET(c *gin.Context) {
 			c.JSON(422, s)
 			return
 		}
+		
+		c.Header("Content-Type", "application/json")
 		c.JSON(200, r)
 	} else {
 		s = data.ResponseStatus{Code: 422, Text: "missing data"}

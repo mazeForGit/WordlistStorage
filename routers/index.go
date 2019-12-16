@@ -9,7 +9,9 @@ import (
 func Index(c *gin.Context) {
 	c.HTML(http.StatusOK, "index.html", nil)
 }
-
+func Reporter(c *gin.Context) {
+	c.HTML(http.StatusOK, "reporter.html", nil)
+}
 func NotFoundError(c *gin.Context) {
 	c.HTML(http.StatusOK, "404.html", nil)
 }
