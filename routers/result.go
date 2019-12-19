@@ -43,7 +43,7 @@ func ResultGET(c *gin.Context) {
 			return
 		}
 		
-		c.Header("Content-Type", "application/json")
+		fmt.Println(r)
 		c.JSON(200, r)
 	} else {
 		s = data.ResponseStatus{Code: 422, Text: "missing data"}
