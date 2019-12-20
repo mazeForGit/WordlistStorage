@@ -32,6 +32,7 @@ type Test struct {
     Category  string	`json:"category"`
 }
 type Word struct {
+	Id  int		`json:"id"`
     Name  string	`json:"name"`
 	Count int		`json:"count"`
 	Occurance int	`json:"occurance"`
@@ -82,21 +83,20 @@ func RebuildWordListResult() {
 	}	
 }
 func ResultOnSession(test string, domain string) ([]Word, error) {
-	fmt.Println("ResultOnSession domain = " + domain)
+	fmt.Println("ResultOnSession .. domain = " + domain)
 	
 	sData, err := GetWordListFromStorage(domain)
 	if err != nil {
 		return nil, errors.New("no item")
 	}
 	gwl := GetWordsList(test)
-	
-	//fmt.Println(sData)
 	lwl := sData.Words
 	
 	for i := 0; i < len(lwl); i++ {
 		for j := 0; j < len(gwl); j++ {
 			if lwl[i].Name == gwl[j].Name {
 				if gwl[j].Occurance > 0 && gwl[j].Count > 0 {
+					lwl[i].Id = gwl[j].Id
 					lwl[i].Count = gwl[j].Occurance / gwl[j].Count
 				}
 			}
@@ -106,7 +106,7 @@ func ResultOnSession(test string, domain string) ([]Word, error) {
 	return lwl, nil
 }
 func ResultOnSessionByTest(test string, domain string) (Result, error) {
-	fmt.Println("ResultOnSession test = " + test + ", domain = " + domain)
+	fmt.Println("ResultOnSession .. test = " + test + ", domain = " + domain)
 	
 	gwl := GetWordsList(test)
 	PrepareResultsBasedOnTest(test, gwl)
@@ -154,7 +154,7 @@ func ResultOnSessionByTest(test string, domain string) (Result, error) {
 	return GlobalWordListResult, nil
 }
 func PrepareResultsBasedOnTest(test string, gwl []Word) {
-	//fmt.Println("PrepareResultsBasedOnTest")
+	//fmt.Println("PrepareResultsBasedOnTest .. test = " + test)
 
 	GlobalWordListResult.Test = test
 	GlobalWordListResult.Category = GlobalWordListResult.Category[0:0]
@@ -195,7 +195,7 @@ func PrepareResultsBasedOnTest(test string, gwl []Word) {
 	//fmt.Println(GlobalWordListResult)
 }
 func GetWordsList(test string) []Word {
-	fmt.Println("GetWordsList")
+	fmt.Println("GetWordsList .. test = " + test)
 	var wl []Word
 	
 	fmt.Println("GetWordsList .. len(GlobalWordList.Words) = " + strconv.Itoa(len(GlobalWordList.Words)))
@@ -205,6 +205,7 @@ func GetWordsList(test string) []Word {
 			for j := 0; j < len(GlobalWordList.Words[i].Tests); j++ {
 				if test == "" || GlobalWordList.Words[i].Tests[j].Name == test {
 					wl = append(wl, GlobalWordList.Words[i])
+					//fmt.Println(GlobalWordList.Words[i])
 					break;
 				}
 			}
@@ -277,7 +278,7 @@ func AddWordListResultsToGlobalWordList(wl []Word) {
 
 func ReadGlobalWordlistFromRemote() error {
 	fmt.Println("ReadGlobalWordlist")
-	fmt.Println("have GlobalWordlist.Words = " + strconv.Itoa(len(GlobalWordList.Words)))
+	fmt.Println("have .. GlobalWordlist.Words = " + strconv.Itoa(len(GlobalWordList.Words)))
 	
     var err error
 	var resp *http.Response
@@ -302,7 +303,7 @@ func ReadGlobalWordlistFromRemote() error {
     json.Unmarshal(body, &GlobalWordList)
 	// todo: faster, but include test
     //json.Unmarshal(body, &GlobalWordList.Words)
-	fmt.Println("got GlobalWordList.Words = " + strconv.Itoa(len(GlobalWordList.Words)))
+	fmt.Println("got .. GlobalWordList.Words = " + strconv.Itoa(len(GlobalWordList.Words)))
 
 	return nil
 }
