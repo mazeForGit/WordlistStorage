@@ -12,6 +12,9 @@
 *.out
 
 # Elastic Beanstalk Files
+.ebextensions
+.ebextensions/*
+.elasticbeanstalk
 .elasticbeanstalk/*
 
 # Dependency directories (remove the comment below to include it)
