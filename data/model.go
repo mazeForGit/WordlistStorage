@@ -285,9 +285,7 @@ func ReadGlobalWordlistFromRemote() error {
 	var body []byte
 	var requestUrl string = ""
 	
-    requestUrl = GlobalConfig.WordListUrl + "/wordlist"
-	// todo: faster, but include test
-    //requestUrl = GlobalConfig.WordListUrl + "/words?testOnly=true&format=json"
+    requestUrl = GlobalConfig.WordListUrl + "/wordlist?testOnly=true"
 	fmt.Println("connect to wordlist and get words with tests = " + requestUrl)
     resp, err = http.Get(requestUrl)
     if err != nil {
@@ -301,8 +299,6 @@ func ReadGlobalWordlistFromRemote() error {
     }
     
     json.Unmarshal(body, &GlobalWordList)
-	// todo: faster, but include test
-    //json.Unmarshal(body, &GlobalWordList.Words)
 	fmt.Println("got .. GlobalWordList.Words = " + strconv.Itoa(len(GlobalWordList.Words)))
 
 	return nil
