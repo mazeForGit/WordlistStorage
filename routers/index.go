@@ -12,6 +12,9 @@ func Index(c *gin.Context) {
 func Reporter(c *gin.Context) {
 	c.HTML(http.StatusOK, "reporter.html", nil)
 }
+func Player(c *gin.Context) {
+	c.HTML(http.StatusOK, "player.html", nil)
+}
 func NotFoundError(c *gin.Context) {
 	c.HTML(http.StatusOK, "404.html", nil)
 }

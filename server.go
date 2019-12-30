@@ -32,6 +32,7 @@ func main() {
 	router.NoRoute(routers.NotFoundError)
 	router.GET("/500", routers.InternalServerError)
 	router.GET("/reporter", routers.Reporter)
+	router.GET("/player", routers.Player)
 	router.GET("/health", routers.HealthGET)
 
 	// global config
@@ -41,6 +42,9 @@ func main() {
 	router.PUT("/wordliststorage", routers.WordListStoragePUT)
 	
 	// session based
+	router.GET("/domain", routers.DomainGET)
+	router.GET("/word", routers.WordGET)
+	router.POST("/word", routers.WordPOST)
 	router.GET("/wordlist", routers.WordListGET)
 	router.PUT("/wordlist", routers.WordListPUT)
 	router.GET("/result", routers.ResultGET)

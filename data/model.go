@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"strconv"
 	"errors"
+	"math/rand"
+	"time"
 )
 type Config struct {
     WordListUrl  string	`json:"wordlisturl"`
@@ -64,6 +66,45 @@ var GlobalWordList WordList
 var GlobalWordListStorage []WordList
 var GlobalWordListResult Result
 
+
+func GetDomains() []SessionStatus{
+	fmt.Println("GetDomains")
+	
+	var ss []SessionStatus
+	for i := 0; i < len(GlobalWordListStorage); i++ {
+		ss = append(ss, GlobalWordListStorage[i].Session)
+	}
+	
+	return ss
+}
+func GetWordList(size string) []Word {
+	fmt.Println("GetWordList .. size = " + size)
+	
+	var wl []Word
+	var max int = 10
+		
+	if size == "small" {
+		max = 20
+	} else if size == "medium" {
+		max = 40
+	} else if size == "large" {
+		max = 60
+	}
+	
+	s1 := rand.NewSource(time.Now().UnixNano())
+    r1 := rand.New(s1)
+	
+	for i := 0; i < max; i++ {
+		j := r1.Intn(len(GlobalWordList.Words) - 1)
+		w := GlobalWordList.Words[j]
+		w.Tests = nil
+		w.Count = 0
+		w.Occurance = 0
+		wl = append(wl, w)
+	} 
+		
+	return wl
+}
 func RebuildWordListResult() {
 	fmt.Println("RebuildWordListResult")
 	
@@ -226,6 +267,22 @@ func GetWordListFromStorage(domain string) (WordList, error) {
 	}
 
     return wl, errors.New("no item")
+}
+func AddWordsToStorage(domain string, wrds []Word) {
+	fmt.Println("AddWordsToStorage.. domain = " + domain + ", len(wrds) = " + strconv.Itoa(len(wrds)))
+	
+	if len(wrds) == 0 {
+		return
+	}
+	// insert into storage
+	// replace if present
+	
+	//fmt.Println(wrds)
+	var wl WordList
+	wl.Words = wrds
+	wl.Session = SessionStatus { SessionID: 0, Count: 0, RequestExecution: false, PageToScan: "self", DomainsAllowed: domain, NumberLinksFound: 0, NumberLinksVisited: 0, ExecutionStarted: false, ExecutionFinished: true, WordsScanned: 0 }
+	
+	AddWordListToStorage(wl)
 }
 func AddWordListToStorage(wl WordList) {
 	fmt.Println("AddWordListToStorage.. len(wl.Words) = " + strconv.Itoa(len(wl.Words)))
