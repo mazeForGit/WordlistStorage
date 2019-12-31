@@ -83,11 +83,11 @@ func GetWordList(size string) []Word {
 	var wl []Word
 	var max int = 10
 		
-	if size == "small" {
+	if size == "short" {
 		max = 20
 	} else if size == "medium" {
 		max = 40
-	} else if size == "large" {
+	} else if size == "long" {
 		max = 60
 	}
 	
