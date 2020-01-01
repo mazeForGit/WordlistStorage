@@ -32,6 +32,7 @@ type SessionStatus struct {
 type Test struct {
     Name  string	`json:"name"`
     Category  string	`json:"category"`
+	Words []int	`json:"words"`
 }
 type Word struct {
 	Id  int		`json:"id"`
@@ -77,33 +78,69 @@ func GetDomains() []SessionStatus{
 	
 	return ss
 }
-func GetWordList(size string) []Word {
-	fmt.Println("GetWordList .. size = " + size)
+func GetWordList(test string, size string) ([]Word, error) {
+	fmt.Println("GetWordList .. test = " + test + ", size = " + size)
 	
 	var wl []Word
-	var max int = 10
+	var maxWordsInTest int = 10
 		
 	if size == "short" {
-		max = 20
+		maxWordsInTest = 20
 	} else if size == "medium" {
-		max = 40
+		maxWordsInTest = 40
 	} else if size == "long" {
-		max = 60
+		maxWordsInTest = 80
 	}
+	fmt.Println("GetWordList .. maxWordsInTest = " + strconv.Itoa(maxWordsInTest))
+	
+	// find out how many categories are in test
+	var maxCategories = 0
+	for k := 0; k < len(GlobalWordList.Tests); k++ {
+		//fmt.Println("GetWordList .. GlobalWordList.Tests[k].Name = " + GlobalWordList.Tests[k].Name)
+		if GlobalWordList.Tests[k].Name == test {
+			maxCategories++
+		}
+	}
+	fmt.Println("GetWordList .. maxCategories = " + strconv.Itoa(maxCategories))
+	
+	if maxCategories == 0 {
+		return nil, errors.New("no test category")
+	}
+	
+	var wordsPerTestCategory int = maxWordsInTest / maxCategories
+	fmt.Println("GetWordList .. wordsPerTestCategory = " + strconv.Itoa(wordsPerTestCategory))
 	
 	s1 := rand.NewSource(time.Now().UnixNano())
     r1 := rand.New(s1)
 	
-	for i := 0; i < max; i++ {
-		j := r1.Intn(len(GlobalWordList.Words) - 1)
-		w := GlobalWordList.Words[j]
-		w.Tests = nil
-		w.Count = 0
-		w.Occurance = 0
-		wl = append(wl, w)
-	} 
-		
-	return wl
+	// random over all without test category
+	//for i := 0; i < max; i++ {
+	//	j := r1.Intn(len(GlobalWordList.Words) - 1)
+	//	w := GlobalWordList.Words[j]
+	//	w.Tests = nil
+	//	w.Count = 0
+	//	w.Occurance = 0
+	//	wl = append(wl, w)
+	//} 
+	
+	// random over test category
+	for k := 0; k < len(GlobalWordList.Tests); k++ {
+		if GlobalWordList.Tests[k].Name == test {
+			fmt.Println("GetWordList .. Test.Name = " + GlobalWordList.Tests[k].Name + ", Test.Category = " + GlobalWordList.Tests[k].Category + ", Test.Words.length = " + strconv.Itoa(len(GlobalWordList.Tests[k].Words)))
+			
+			for i := 0; i < wordsPerTestCategory; i++ {
+				j := r1.Intn(len(GlobalWordList.Tests[k].Words) - 1)
+				rw := GlobalWordList.Tests[k].Words[j]
+				w := GlobalWordList.Words[rw]
+				w.Tests = nil
+				w.Count = 0
+				w.Occurance = 0
+				wl = append(wl, w)
+			} 
+		}
+	}
+	
+	return wl, nil
 }
 func RebuildWordListResult() {
 	fmt.Println("RebuildWordListResult")
@@ -358,5 +395,23 @@ func ReadGlobalWordlistFromRemote() error {
     json.Unmarshal(body, &GlobalWordList)
 	fmt.Println("got .. GlobalWordList.Words = " + strconv.Itoa(len(GlobalWordList.Words)))
 
+	PrepareGlobalWordlistForTest()
+	
 	return nil
+}
+func PrepareGlobalWordlistForTest() {
+	fmt.Println(PrepareGlobalWordlistForTest)
+	
+	// 
+	for i := 0; i < len(GlobalWordList.Words); i++ {
+		for j := 0; j < len(GlobalWordList.Words[i].Tests); j++ {
+			for k := 0; k < len(GlobalWordList.Tests); k++ {
+				if GlobalWordList.Words[i].Tests[j].Name == GlobalWordList.Tests[k].Name && GlobalWordList.Words[i].Tests[j].Category == GlobalWordList.Tests[k].Category {
+					GlobalWordList.Tests[k].Words = append(GlobalWordList.Tests[k].Words, i)
+				}
+			}
+		} 
+	}
+	
+	//fmt.Println(GlobalWordList.Tests)
 }
