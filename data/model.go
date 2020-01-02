@@ -126,7 +126,7 @@ func GetWordList(test string, size string) ([]Word, error) {
 	// random over test category
 	for k := 0; k < len(GlobalWordList.Tests); k++ {
 		if GlobalWordList.Tests[k].Name == test {
-			fmt.Println("GetWordList .. Test.Name = " + GlobalWordList.Tests[k].Name + ", Test.Category = " + GlobalWordList.Tests[k].Category + ", Test.Words.length = " + strconv.Itoa(len(GlobalWordList.Tests[k].Words)))
+			//fmt.Println("GetWordList .. Test.Name = " + GlobalWordList.Tests[k].Name + ", Test.Category = " + GlobalWordList.Tests[k].Category + ", Test.Words.length = " + strconv.Itoa(len(GlobalWordList.Tests[k].Words)))
 			
 			for i := 0; i < wordsPerTestCategory; i++ {
 				j := r1.Intn(len(GlobalWordList.Tests[k].Words) - 1)
@@ -135,12 +135,26 @@ func GetWordList(test string, size string) ([]Word, error) {
 				w.Tests = nil
 				w.Count = 0
 				w.Occurance = 0
-				wl = append(wl, w)
+				// check if word is already present within final list
+				if ContainsWord(wl, w) {
+					i--
+					fmt.Println("word already present .. name = " + w.Name)
+				} else {
+					wl = append(wl, w)
+				}
 			} 
 		}
 	}
 	
 	return wl, nil
+}
+func ContainsWord(wl []Word, w Word) bool {
+	for i := 0; i < len(wl); i++ {
+		if wl[i].Name == w.Name {
+			return true
+		}
+	}
+	return false
 }
 func RebuildWordListResult() {
 	fmt.Println("RebuildWordListResult")
