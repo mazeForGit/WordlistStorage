@@ -305,8 +305,8 @@ func GetWordListFromStorage(domain string) (WordList, error) {
 
     return wl, errors.New("no item")
 }
-func AddWordsToStorage(domain string, wrds []Word) {
-	fmt.Println("AddWordsToStorage.. domain = " + domain + ", len(wrds) = " + strconv.Itoa(len(wrds)))
+func AddWordsToStorage(test string, domain string, wrds []Word) {
+	fmt.Println("AddWordsToStorage.. test = " + test + ", domain = " + domain)
 	
 	if len(wrds) == 0 {
 		return
@@ -317,7 +317,7 @@ func AddWordsToStorage(domain string, wrds []Word) {
 	//fmt.Println(wrds)
 	var wl WordList
 	wl.Words = wrds
-	wl.Session = SessionStatus { SessionID: 0, Count: 0, RequestExecution: false, PageToScan: "self", DomainsAllowed: domain, NumberLinksFound: 0, NumberLinksVisited: 0, ExecutionStarted: false, ExecutionFinished: true, WordsScanned: 0 }
+	wl.Session = SessionStatus { SessionID: 0, Count: 0, RequestExecution: false, PageToScan: test, DomainsAllowed: domain, NumberLinksFound: 0, NumberLinksVisited: 0, ExecutionStarted: false, ExecutionFinished: true, WordsScanned: 0 }
 	
 	AddWordListToStorage(wl)
 }

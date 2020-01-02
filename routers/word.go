@@ -38,8 +38,12 @@ func WordPOST(c *gin.Context) {
 	
 	var vars map[string][]string
 	vars = c.Request.URL.Query()
+	var test string = ""
 	var domain string = ""
 	
+	if _, ok := vars["test"]; ok {
+		test = c.Request.URL.Query().Get("test")
+	}
 	if _, ok := vars["domain"]; ok {
 		domain = c.Request.URL.Query().Get("domain")
 	}
@@ -52,7 +56,7 @@ func WordPOST(c *gin.Context) {
 		return
 	}
 	//fmt.Println(wrds)
-	data.AddWordsToStorage(domain, wrds)
+	data.AddWordsToStorage(test, domain, wrds)
 	
 	s = data.ResponseStatus{Code: 200, Text: "data received"}
 	c.JSON(200, s)
