@@ -32,6 +32,7 @@ type SessionStatus struct {
 type Test struct {
     Name  string	`json:"name"`
     Category  string	`json:"category"`
+    Load  int	`json:"load"`
 	Words []int	`json:"words"`
 }
 type Word struct {
@@ -221,8 +222,15 @@ func ResultOnSessionByTest(test string, domain string) (Result, error) {
 					if gwl[i].Name == lwl[j].Name {
 						for k := 0; k < len(GlobalWordListResult.Category); k++ {
 							if GlobalWordListResult.Category[k].Name == gwl[i].Tests[ii].Category {
+								var load = 1
+								if gwl[i].Tests[ii].Load == 0 {
+									gwl[i].Tests[ii].Load = 1
+								}
+								if gwl[i].Tests[ii].Load == -1 {
+									fmt.Println("load = -1 on category = " + gwl[i].Tests[ii].Category + " on word = " + gwl[i].Name)
+								}
 								GlobalWordListResult.Category[k].LocalWordCount++
-								GlobalWordListResult.Category[k].LocalOccuranceSum += lwl[j].Occurance
+								GlobalWordListResult.Category[k].LocalOccuranceSum += load * lwl[j].Occurance
 								
 								break
 							}
@@ -231,10 +239,17 @@ func ResultOnSessionByTest(test string, domain string) (Result, error) {
 				}
 				for k := 0; k < len(GlobalWordListResult.Category); k++ {
 					if GlobalWordListResult.Category[k].Name == gwl[i].Tests[ii].Category {			
-						if gwl[i].Occurance > 0 {
+						if gwl[i].Occurance != 0 {
+							var load = 1
+							if gwl[i].Tests[ii].Load == 0 {
+								gwl[i].Tests[ii].Load = 1
+							}
+							if gwl[i].Tests[ii].Load == -1 {
+								fmt.Println("load = -1 on category = " + gwl[i].Tests[ii].Category + " on word = " + gwl[i].Name)
+							}
 							GlobalWordListResult.Category[k].GlobalCountSum += gwl[i].Count
 							GlobalWordListResult.Category[k].GlobalWordCount++
-							GlobalWordListResult.Category[k].GlobalOccuranceSum += gwl[i].Occurance
+							GlobalWordListResult.Category[k].GlobalOccuranceSum += load * gwl[i].Occurance
 						}
 						break
 					}
