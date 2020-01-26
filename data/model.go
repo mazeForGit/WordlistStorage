@@ -9,6 +9,7 @@ import (
 	"errors"
 	"math/rand"
 	"time"
+	"strings"
 )
 type Config struct {
     WordListUrl  string	`json:"wordlisturl"`
@@ -40,6 +41,7 @@ type Word struct {
     Name  string	`json:"name"`
 	Count int		`json:"count"`
 	Occurance int	`json:"occurance"`
+	Average int	`json:"average"`
 	Tests []Test	`json:"tests"`
 }
 type WordList struct {
@@ -57,6 +59,7 @@ type ByCategory struct {
 	GlobalOccuranceSum int		`json:"globaloccurancesum"`
 	LocalWordCount int			`json:"localwordcount"`
 	LocalOccuranceSum int		`json:"localoccurancesum"`
+	LocalOccuranceSumPerc int	`json:"localoccurancesumperc"`
 }
 type Result struct {
 	Test string				`json:"test"`
@@ -66,8 +69,6 @@ type Result struct {
 var GlobalConfig Config
 var GlobalWordList WordList
 var GlobalWordListStorage []WordList
-var GlobalWordListResult Result
-
 
 func GetDomains() []SessionStatus{
 	fmt.Println("GetDomains")
@@ -175,22 +176,24 @@ func RebuildWordListResult() {
 		}
 	}	
 }
-func ResultOnSession(test string, domain string) ([]Word, error) {
+func ResultOnSession(domain string) ([]Word, error) {
 	fmt.Println("ResultOnSession .. domain = " + domain)
 	
 	sData, err := GetWordListFromStorage(domain)
 	if err != nil {
 		return nil, errors.New("no item")
 	}
-	gwl := GetWordsList(test)
+	gwl := GetWordsList("")
 	lwl := sData.Words
 	
 	for i := 0; i < len(lwl); i++ {
 		for j := 0; j < len(gwl); j++ {
 			if lwl[i].Name == gwl[j].Name {
+				lwl[i].Id = gwl[j].Id
+				// todo: only for debug
+				//lwl[i].Tests = gwl[j].Tests
 				if gwl[j].Occurance > 0 && gwl[j].Count > 0 {
-					lwl[i].Id = gwl[j].Id
-					lwl[i].Count = gwl[j].Occurance / gwl[j].Count
+					lwl[i].Average = gwl[j].Occurance / gwl[j].Count
 				}
 			}
 		}
@@ -201,55 +204,54 @@ func ResultOnSession(test string, domain string) ([]Word, error) {
 func ResultOnSessionByTest(test string, domain string) (Result, error) {
 	fmt.Println("ResultOnSession .. test = " + test + ", domain = " + domain)
 	
+	var wlResult Result
 	gwl := GetWordsList(test)
-	PrepareResultsBasedOnTest(test, gwl)
+	wlResult = PrepareResultsBasedOnTest(wlResult, test, gwl)
 	sData, err := GetWordListFromStorage(domain)
 	if err != nil {
-		return GlobalWordListResult, errors.New("no item")
+		return wlResult, errors.New("no item")
 	}
 	
+	fmt.Println("sData.Session.PageToScan = " + sData.Session.PageToScan)
 	//fmt.Println(sData)
 	lwl := sData.Words
 	
-	//fmt.Println("len(GlobalWordListResult.Category) = " + strconv.Itoa(len(GlobalWordListResult.Category)))
-	//fmt.Println("len(gwl) =" + strconv.Itoa(len(gwl)))
-	//fmt.Println("len(lwl) =" + strconv.Itoa(len(lwl)))
+	//fmt.Println("len(wlResult.Category) = " + strconv.Itoa(len(wlResult.Category)))
+	fmt.Println("len(gwl) = " + strconv.Itoa(len(gwl)))
+	fmt.Println("len(lwl) = " + strconv.Itoa(len(lwl)))
 	
 	for i := 0; i < len(gwl); i++ {
 		for ii := 0; ii < len(gwl[i].Tests); ii++ {
 			if gwl[i].Tests[ii].Name == test {
 				for j := 0; j < len(lwl); j++ {
 					if gwl[i].Name == lwl[j].Name {
-						for k := 0; k < len(GlobalWordListResult.Category); k++ {
-							if GlobalWordListResult.Category[k].Name == gwl[i].Tests[ii].Category {
-								var load = 1
-								if gwl[i].Tests[ii].Load == 0 {
-									gwl[i].Tests[ii].Load = 1
-								}
+						for k := 0; k < len(wlResult.Category); k++ {
+							if wlResult.Category[k].Name == gwl[i].Tests[ii].Category {
+								wlResult.Category[k].LocalWordCount++
 								if gwl[i].Tests[ii].Load == -1 {
-									fmt.Println("load = -1 on category = " + gwl[i].Tests[ii].Category + " on word = " + gwl[i].Name)
+									if strings.HasPrefix(sData.Session.PageToScan, "self:") {
+										wlResult.Category[k].LocalOccuranceSum += 1+ 5 - lwl[j].Occurance
+									} 
+								} else {
+									wlResult.Category[k].LocalOccuranceSum += lwl[j].Occurance
 								}
-								GlobalWordListResult.Category[k].LocalWordCount++
-								GlobalWordListResult.Category[k].LocalOccuranceSum += load * lwl[j].Occurance
-								
 								break
 							}
 						}
 					}
 				}
-				for k := 0; k < len(GlobalWordListResult.Category); k++ {
-					if GlobalWordListResult.Category[k].Name == gwl[i].Tests[ii].Category {			
+				for k := 0; k < len(wlResult.Category); k++ {
+					if wlResult.Category[k].Name == gwl[i].Tests[ii].Category {			
 						if gwl[i].Occurance != 0 {
-							var load = 1
-							if gwl[i].Tests[ii].Load == 0 {
-								gwl[i].Tests[ii].Load = 1
-							}
+							wlResult.Category[k].GlobalCountSum += gwl[i].Count
+							wlResult.Category[k].GlobalWordCount++
 							if gwl[i].Tests[ii].Load == -1 {
-								fmt.Println("load = -1 on category = " + gwl[i].Tests[ii].Category + " on word = " + gwl[i].Name)
+								if strings.HasPrefix(sData.Session.PageToScan, "self:") {
+									wlResult.Category[k].GlobalOccuranceSum += 1+ 5 - gwl[i].Occurance
+								} 
+							} else {
+								wlResult.Category[k].GlobalOccuranceSum += gwl[i].Occurance
 							}
-							GlobalWordListResult.Category[k].GlobalCountSum += gwl[i].Count
-							GlobalWordListResult.Category[k].GlobalWordCount++
-							GlobalWordListResult.Category[k].GlobalOccuranceSum += load * gwl[i].Occurance
 						}
 						break
 					}
@@ -257,14 +259,32 @@ func ResultOnSessionByTest(test string, domain string) (Result, error) {
 			}
 		} 
 	}
-	
-	return GlobalWordListResult, nil
+	// percent
+	if !strings.HasPrefix(sData.Session.PageToScan, "self:") {
+		var maxValue int = 0
+		var countOnLOccurance int = 0	
+		for j := 0; j < len(lwl); j++ {
+			countOnLOccurance += lwl[j].Occurance
+			if lwl[j].Occurance > maxValue {
+				maxValue = lwl[j].Occurance
+			}
+		}
+		// remove highest value
+		countOnLOccurance -= maxValue
+		fmt.Println("countOnLOccurance = " + strconv.Itoa(countOnLOccurance))
+		for k := 0; k < len(wlResult.Category); k++ {
+			wlResult.Category[k].LocalOccuranceSumPerc = wlResult.Category[k].LocalOccuranceSum * 100 / countOnLOccurance
+			fmt.Println("wlResult.Category[" + strconv.Itoa(k) + "].LocalOccuranceSumPerc = " + strconv.Itoa(wlResult.Category[k].LocalOccuranceSumPerc))
+		}
+	}
+	fmt.Println(wlResult)
+	return wlResult, nil
 }
-func PrepareResultsBasedOnTest(test string, gwl []Word) {
+func PrepareResultsBasedOnTest(wlResult Result, test string, gwl []Word) Result {
 	//fmt.Println("PrepareResultsBasedOnTest .. test = " + test)
 
-	GlobalWordListResult.Test = test
-	GlobalWordListResult.Category = GlobalWordListResult.Category[0:0]
+	wlResult.Test = test
+	wlResult.Category = wlResult.Category[0:0]
 	for i := 0; i < len(GlobalWordList.Tests); i++ {
 		//fmt.Println("GlobalWordList.Tests[i].Name = " + GlobalWordList.Tests[i].Name)
 		if GlobalWordList.Tests[i].Name == test {
@@ -279,7 +299,7 @@ func PrepareResultsBasedOnTest(test string, gwl []Word) {
 				LocalWordCount: 0,
 				LocalOccuranceSum: 0,
 			}
-			GlobalWordListResult.Category = append(GlobalWordListResult.Category, c)
+			wlResult.Category = append(wlResult.Category, c)
 		}
 	}
 	// init with reference from GlobalWordList
@@ -287,11 +307,11 @@ func PrepareResultsBasedOnTest(test string, gwl []Word) {
 		for ii := 0; ii < len(gwl[i].Tests); ii++ {
 			if gwl[i].Tests[ii].Name == test {
 				
-						for k := 0; k < len(GlobalWordListResult.Category); k++ {
-							if GlobalWordListResult.Category[k].Name == gwl[i].Tests[ii].Category {
-								GlobalWordListResult.Category[k].ReferenceWordCount++ 
-								GlobalWordListResult.Category[k].ReferenceCountSum += gwl[i].Count 
-								GlobalWordListResult.Category[k].ReferenceOccuranceSum += gwl[i].Occurance 
+						for k := 0; k < len(wlResult.Category); k++ {
+							if wlResult.Category[k].Name == gwl[i].Tests[ii].Category {
+								wlResult.Category[k].ReferenceWordCount++ 
+								wlResult.Category[k].ReferenceCountSum += gwl[i].Count 
+								wlResult.Category[k].ReferenceOccuranceSum += gwl[i].Occurance 
 								break
 							}
 						}
@@ -299,7 +319,8 @@ func PrepareResultsBasedOnTest(test string, gwl []Word) {
 		} 
 	}
 	
-	//fmt.Println(GlobalWordListResult)
+	//fmt.Println(wlResult)
+	return wlResult
 }
 func GetWordsList(test string) []Word {
 	fmt.Println("GetWordsList .. test = " + test)

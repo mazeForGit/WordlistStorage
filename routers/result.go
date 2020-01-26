@@ -24,7 +24,7 @@ func ResultGET(c *gin.Context) {
 	}
 	
 	if test == "" && domain != "" {
-		wl, err := data.ResultOnSession(test, domain)
+		wl, err := data.ResultOnSession(domain)
 		if err != nil {
 			s = data.ResponseStatus{Code: 422, Text: "unknwon domain = " + domain}
 			c.JSON(422, s)
