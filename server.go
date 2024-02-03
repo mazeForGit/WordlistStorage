@@ -2,18 +2,18 @@ package main
 
 import (
 	"os"
-	
-	"github.com/gin-gonic/gin"
+
 	"github.com/gin-contrib/static"
+	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	
+
 	routers "github.com/mazeForGit/WordlistStorage/routers"
 )
 
 func port() string {
 	port := os.Getenv("PORT")
 	if len(port) == 0 {
-		port = "5000"
+		port = "5020"
 	}
 	return ":" + port
 }
@@ -40,7 +40,7 @@ func main() {
 	router.POST("/config", routers.ConfigPOST)
 	router.GET("/wordliststorage", routers.WordListStorageGET)
 	router.PUT("/wordliststorage", routers.WordListStoragePUT)
-	
+
 	// session based
 	router.GET("/domain", routers.DomainGET)
 	router.GET("/word", routers.WordGET)
