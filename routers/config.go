@@ -5,29 +5,29 @@ import (
 	
 	"github.com/gin-gonic/gin"
 	
-	data "github.com/mazeForGit/WordlistStorage/data"
+	data "github.com/mazeForGit/WordlistStorage/model"
 )
 func ConfigGET(c *gin.Context) {	
-	c.JSON(200, data.GlobalConfig)
+	c.JSON(200, model.GlobalConfig)
 }
 func ConfigPOST(c *gin.Context) {
-	var s data.ResponseStatus
+	var s model.ResponseStatus
 	var err error
 	
-	err = c.BindJSON(&data.GlobalConfig)
+	err = c.BindJSON(&model.GlobalConfig)
 	if err != nil {
-		s = data.ResponseStatus{Code: 422, Text: "unprocessable entity"}
+		s = model.ResponseStatus{Code: 422, Text: "unprocessable entity"}
 		c.JSON(422, s)
 		return
 	}
 	
-	err = data.ReadGlobalWordlistFromRemote()
+	err = model.ReadGlobalWordlistFromRemote()
 	if err != nil {
-		s = data.ResponseStatus{Code: 422, Text: "can't read global wordlist"}
+		s = model.ResponseStatus{Code: 422, Text: "can't read global wordlist"}
 		c.JSON(200, s)
 		return
 	}
 	
-	s = data.ResponseStatus{Code: 200, Text: "got global wordlist"}
+	s = model.ResponseStatus{Code: 200, Text: "got global wordlist"}
 	c.JSON(200, s)
 }

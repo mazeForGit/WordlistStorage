@@ -5,25 +5,25 @@ import (
 	//"fmt"
 	
 	"github.com/gin-gonic/gin"
-	data "github.com/mazeForGit/WordlistStorage/data"
+	data "github.com/mazeForGit/WordlistStorage/model"
 )
 
 func WordListStorageGET(c *gin.Context) {
-	c.JSON(200, data.GlobalWordListStorage)
+	c.JSON(200, model.GlobalWordListStorage)
 }
 func WordListStoragePUT(c *gin.Context) {
-	var s data.ResponseStatus
+	var s model.ResponseStatus
 	
-	removeCount := strconv.Itoa(len(data.GlobalWordListStorage))
-	err := c.BindJSON(&data.GlobalWordListStorage)
+	removeCount := strconv.Itoa(len(model.GlobalWordListStorage))
+	err := c.BindJSON(&model.GlobalWordListStorage)
 	if err != nil {
-		s = data.ResponseStatus{Code: 422, Text: "unprocessable entity"}
+		s = model.ResponseStatus{Code: 422, Text: "unprocessable entity"}
 		c.JSON(422, s)
 		return
 	}
 	
-	data.RebuildWordListResult()
-	replaceCount := strconv.Itoa(len(data.GlobalWordListStorage))
-	s = data.ResponseStatus{Code: 200, Text: "replaced items = " + removeCount + " by " + replaceCount}
+	model.RebuildWordListResult()
+	replaceCount := strconv.Itoa(len(model.GlobalWordListStorage))
+	s = model.ResponseStatus{Code: 200, Text: "replaced items = " + removeCount + " by " + replaceCount}
 	c.JSON(200, s)
 }

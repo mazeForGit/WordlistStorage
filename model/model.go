@@ -465,3 +465,63 @@ func PrepareGlobalWordlistForTest() {
 	
 	//fmt.Println(GlobalWordList.Tests)
 }
+//
+// read configuration from file
+//
+func ReadConfigurationFromFile(fileName string) (err error) {
+	fmt.Println(". ReadConfigurationFromFile .. fileName = " + fileName)
+
+	file, err := os.Open(fileName)
+	if err != nil {
+		return err
+	}
+    
+	defer file.Close() // defer the closing for later parsing
+	byteValue, err := ioutil.ReadAll(file)
+	if err != nil {
+		return err
+	}
+	
+	err = json.Unmarshal([]byte(byteValue), &GlobalConfig)
+	return err
+}
+//
+// read wordListStorage from file
+//
+func ReadWordListStorageFromFile(fileName string) (err error) {
+	fmt.Println(". ReadWordListStorageFromFile .. fileName = " + fileName)
+
+	file, err := os.Open(fileName)
+	if err != nil {
+		return err
+	}
+	
+	defer file.Close() // defer the closing for later parsing
+	byteValue, err := ioutil.ReadAll(file)
+	if err != nil {
+		return err
+	}
+	
+	err = json.Unmarshal([]byte(byteValue), &GlobalWordListStorage)
+    return err
+}
+//
+// read wordList from file
+//
+func ReadWordListFromFile(fileName string) (err error) {
+	fmt.Println(". ReadWordListFromFile .. fileName = " + fileName)
+
+	file, err := os.Open(fileName)
+	if err != nil {
+		return err
+	}
+	
+	defer file.Close() // defer the closing for later parsing
+	byteValue, err := ioutil.ReadAll(file)
+	if err != nil {
+		return err
+	}
+	
+	err = json.Unmarshal([]byte(byteValue), &GlobalWordList)
+    return err
+}

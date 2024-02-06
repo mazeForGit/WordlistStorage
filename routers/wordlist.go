@@ -5,24 +5,24 @@ import (
 	//"fmt"
 	
 	"github.com/gin-gonic/gin"
-	data "github.com/mazeForGit/WordlistStorage/data"
+	data "github.com/mazeForGit/WordlistStorage/model"
 )
 func WordListGET(c *gin.Context) {	
-	c.JSON(200, data.GlobalWordList)
+	c.JSON(200, model.GlobalWordList)
 }
 func WordListPUT(c *gin.Context) {
-	var s data.ResponseStatus
+	var s model.ResponseStatus
 
-	var wl data.WordList
+	var wl model.WordList
 	err := c.BindJSON(&wl)
 	if err != nil {
-		s = data.ResponseStatus{Code: 422, Text: "unprocessable entity"}
+		s = model.ResponseStatus{Code: 422, Text: "unprocessable entity"}
 		c.JSON(422, s)
 		return
 	}
 	//fmt.Println(wl)
-	data.AddWordListToStorage(wl)
+	model.AddWordListToStorage(wl)
 	
-	s = data.ResponseStatus{Code: 200, Text: "data received"}
+	s = model.ResponseStatus{Code: 200, Text: "data received"}
 	c.JSON(200, s)
 }

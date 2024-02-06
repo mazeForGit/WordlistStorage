@@ -3,14 +3,14 @@ package routers
 import (
 
 	"github.com/gin-gonic/gin"
-	data "github.com/mazeForGit/WordlistStorage/data"
+	data "github.com/mazeForGit/WordlistStorage/model"
 )
 
 func ResultGET(c *gin.Context) {
 
 	c.Header("Content-Type", "application/json")
 		
-	var s data.ResponseStatus
+	var s model.ResponseStatus
 	var vars map[string][]string
 	vars = c.Request.URL.Query()
 	var test string = ""
@@ -24,25 +24,25 @@ func ResultGET(c *gin.Context) {
 	}
 	
 	if test == "" && domain != "" {
-		wl, err := data.ResultOnSession(domain)
+		wl, err := model.ResultOnSession(domain)
 		if err != nil {
-			s = data.ResponseStatus{Code: 422, Text: "unknwon domain = " + domain}
+			s = model.ResponseStatus{Code: 422, Text: "unknwon domain = " + domain}
 			c.JSON(422, s)
 			return
 		}
 		
 		c.JSON(200, wl)
 	} else if test != "" && domain != "" {
-		r, err := data.ResultOnSessionByTest(test, domain)
+		r, err := model.ResultOnSessionByTest(test, domain)
 		if err != nil {
-			s = data.ResponseStatus{Code: 422, Text: "unknwon domain = " + domain}
+			s = model.ResponseStatus{Code: 422, Text: "unknwon domain = " + domain}
 			c.JSON(422, s)
 			return
 		}
 		
 		c.JSON(200, r)
 	} else {
-		s = data.ResponseStatus{Code: 422, Text: "missing data"}
+		s = model.ResponseStatus{Code: 422, Text: "missing data"}
 		c.JSON(422, s)
 	}
 }

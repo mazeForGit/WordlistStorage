@@ -1,25 +1,53 @@
 package main
 
 import (
+	"flag"
 	"os"
 
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 
+	routers "github.com/mazeForGit/WordlistStorage/model"
 	routers "github.com/mazeForGit/WordlistStorage/routers"
 )
 
-func port() string {
-	port := os.Getenv("PORT")
-	if len(port) == 0 {
-		port = "5020"
-	}
-	return ":" + port
-}
-
 func main() {
 
+	//
+	// define and handle flags
+	var flagServerName = flag.String("name", "server", "server name")
+	var flagServerPort = flag.String("port", "6001", "server port")
+	var fileConfig = flag.String("frConfig", "./data/config.json", "file containing config")
+	var fileWordList = flag.String("frWL", "./data/WordList.json", "file containing wordList")
+	var fileWordListStorage = flag.String("frWLS", "./data/WordListStorage.json", "file containing wordListStorage")
+	
+	//
+	// handle flags
+	if fileConfig != "" {
+		err := model.ReadConfigurationFromFile(fileConfig)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(-1)
+		}
+	}
+	if fileWordList != "" {
+		err := model.ReadWordListFromFile(fileWordListStorage)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(-1)
+		}
+	}
+	if fileWordListStorage != "" {
+		err := model.ReadWordListStorageFromFile(fileWordListStorage)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(-1)
+		}
+	}
+	
+	//
+	// init middleware
 	log.SetFormatter(&log.JSONFormatter{})
 	log.SetOutput(os.Stdout)
 
@@ -49,6 +77,18 @@ func main() {
 	router.PUT("/wordlist", routers.WordListPUT)
 	router.GET("/result", routers.ResultGET)
 
-	log.Info("Starting server on port " + port())
-	router.Run(port())
+	log.Info("run server name = " + flagServerName + " on port = " + port())
+	router.Run(port(flagServerPort))
+}
+//
+// get port from environment or cli or take default
+//
+func port(flagServerPort string) string {
+	port := os.Getenv("PORT")
+	if len(port) == 0 {
+		if len(flagServerPort) == 0 {
+			port = "6001"
+		}
+	}
+	return ":" + port
 }

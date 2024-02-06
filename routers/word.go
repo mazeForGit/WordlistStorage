@@ -5,10 +5,10 @@ import (
 	//"fmt"
 	
 	"github.com/gin-gonic/gin"
-	data "github.com/mazeForGit/WordlistStorage/data"
+	data "github.com/mazeForGit/WordlistStorage/model"
 )
 func WordGET(c *gin.Context) {	
-	var s data.ResponseStatus
+	var s model.ResponseStatus
 	
 	var vars map[string][]string
 	vars = c.Request.URL.Query()
@@ -22,10 +22,10 @@ func WordGET(c *gin.Context) {
 		test = c.Request.URL.Query().Get("test")
 	}
 	
-	wrl, err := data.GetWordList(test, size)
+	wrl, err := model.GetWordList(test, size)
 	
 	if err != nil {
-		s = data.ResponseStatus{Code: 422, Text: "unprocessable entity"}
+		s = model.ResponseStatus{Code: 422, Text: "unprocessable entity"}
 		c.JSON(422, s)
 		return
 	}
@@ -34,7 +34,7 @@ func WordGET(c *gin.Context) {
 }
 
 func WordPOST(c *gin.Context) {
-	var s data.ResponseStatus
+	var s model.ResponseStatus
 	
 	var vars map[string][]string
 	vars = c.Request.URL.Query()
@@ -48,16 +48,16 @@ func WordPOST(c *gin.Context) {
 		domain = c.Request.URL.Query().Get("domain")
 	}
 	
-	var wrds []data.Word
+	var wrds []model.Word
 	err := c.BindJSON(&wrds)
 	if err != nil {
-		s = data.ResponseStatus{Code: 422, Text: "unprocessable entity"}
+		s = model.ResponseStatus{Code: 422, Text: "unprocessable entity"}
 		c.JSON(422, s)
 		return
 	}
 	//fmt.Println(wrds)
-	data.AddWordsToStorage(test, domain, wrds)
+	model.AddWordsToStorage(test, domain, wrds)
 	
-	s = data.ResponseStatus{Code: 200, Text: "data received"}
+	s = model.ResponseStatus{Code: 200, Text: "data received"}
 	c.JSON(200, s)
 }
