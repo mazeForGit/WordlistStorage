@@ -5,7 +5,7 @@ import (
 	//"fmt"
 	
 	"github.com/gin-gonic/gin"
-	data "github.com/mazeForGit/WordlistStorage/model"
+	model "github.com/mazeForGit/WordlistStorage/model"
 )
 
 func WordListStorageGET(c *gin.Context) {

@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	
 	"github.com/gin-gonic/gin"
-	data "github.com/mazeForGit/Wordlist/model"
+	model "github.com/mazeForGit/WordlistStorage/model"
 )
 
 func Test_WordListGET_emptyData(t *testing.T) {

@@ -3,7 +3,7 @@ package routers
 import (
 
 	"github.com/gin-gonic/gin"
-	data "github.com/mazeForGit/WordlistStorage/model"
+	model "github.com/mazeForGit/WordlistStorage/model"
 )
 
 func ResultGET(c *gin.Context) {

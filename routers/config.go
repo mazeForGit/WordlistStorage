@@ -5,7 +5,7 @@ import (
 	
 	"github.com/gin-gonic/gin"
 	
-	data "github.com/mazeForGit/WordlistStorage/model"
+	model "github.com/mazeForGit/WordlistStorage/model"
 )
 func ConfigGET(c *gin.Context) {	
 	c.JSON(200, model.GlobalConfig)

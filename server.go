@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"flag"
 	"os"
 
@@ -8,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 
-	routers "github.com/mazeForGit/WordlistStorage/model"
+	model "github.com/mazeForGit/WordlistStorage/model"
 	routers "github.com/mazeForGit/WordlistStorage/routers"
 )
 
@@ -19,27 +20,28 @@ func main() {
 	var flagServerName = flag.String("name", "server", "server name")
 	var flagServerPort = flag.String("port", "6001", "server port")
 	var fileConfig = flag.String("frConfig", "./data/config.json", "file containing config")
-	var fileWordList = flag.String("frWL", "./data/WordList.json", "file containing wordList")
-	var fileWordListStorage = flag.String("frWLS", "./data/WordListStorage.json", "file containing wordListStorage")
+	var fileWordList = flag.String("frWL", "./data/wordList.json", "file containing wordList")
+	var fileWordListStorage = flag.String("frWLS", "./data/wordListStorage.json", "file containing wordListStorage")
+	flag.Parse()
 	
 	//
 	// handle flags
-	if fileConfig != "" {
-		err := model.ReadConfigurationFromFile(fileConfig)
+	if *fileConfig != "" {
+		err := model.ReadConfigurationFromFile(*fileConfig)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(-1)
 		}
 	}
-	if fileWordList != "" {
-		err := model.ReadWordListFromFile(fileWordListStorage)
+	if *fileWordList != "" {
+		err := model.ReadWordListFromFile(*fileWordList)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(-1)
 		}
 	}
-	if fileWordListStorage != "" {
-		err := model.ReadWordListStorageFromFile(fileWordListStorage)
+	if *fileWordListStorage != "" {
+		err := model.ReadWordListStorageFromFile(*fileWordListStorage)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(-1)
@@ -77,18 +79,16 @@ func main() {
 	router.PUT("/wordlist", routers.WordListPUT)
 	router.GET("/result", routers.ResultGET)
 
-	log.Info("run server name = " + flagServerName + " on port = " + port())
-	router.Run(port(flagServerPort))
+	log.Info("run server name = " + *flagServerName + " on port = " + port(*flagServerPort))
+	router.Run(port(*flagServerPort))
 }
 //
-// get port from environment or cli or take default
+// get port from environment or cli
 //
 func port(flagServerPort string) string {
 	port := os.Getenv("PORT")
 	if len(port) == 0 {
-		if len(flagServerPort) == 0 {
-			port = "6001"
-		}
+		port = flagServerPort
 	}
 	return ":" + port
 }

@@ -47,10 +47,6 @@ github.com/leodido/go-urn v1.2.4/go.mod h1:7ZrI8mTSeBSHl/UaRyKQW1qZeMgak41ANeCNa
 github.com/mattn/go-isatty v0.0.12/go.mod h1:cbi8OIDigv2wuxKPP5vlRcQ1OAZbq2CE4Kysco4FUpU=
 github.com/mattn/go-isatty v0.0.19 h1:JITubQf0MOLdlGRuRq+jtsDlekdYPia9ZFsB8h/APPA=
 github.com/mattn/go-isatty v0.0.19/go.mod h1:W+V8PltTTMOvKvAeJH7IuucS94S2C6jfK/D7dTCTo3Y=
-github.com/mazeForGit/Wordlist v0.0.0-20200104095825-01e9638465ab h1:BToVKb6EXpXCq701eTYgfCprRzFnX8u0s+WJ3GPbsDg=
-github.com/mazeForGit/Wordlist v0.0.0-20200104095825-01e9638465ab/go.mod h1:6qwJnSDSZrAAGbpjn31Y+wPWjQQ8dlWyWH+wsVynxcw=
-github.com/mazeForGit/WordlistStorage v0.0.0-20200126162504-57f43bb1d8c9 h1:jEGbCtnLZrmSjgJ5TaEv5k/VrTeXdmVgJZtUS+Bph0o=
-github.com/mazeForGit/WordlistStorage v0.0.0-20200126162504-57f43bb1d8c9/go.mod h1:eiKQ1SruxPHtkvYS9tGGOXM3BvEP/7Zcn13Mm3HLgvc=
 github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421/go.mod h1:6dJC0mAP4ikYIbvyc7fijjWJddQyLn8Ig3JB5CqoB9Q=
 github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd h1:TRLaZ9cD/w8PVh93nsPXa1VrQ6jlwL5oN8l14QlcNfg=
 github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd/go.mod h1:6dJC0mAP4ikYIbvyc7fijjWJddQyLn8Ig3JB5CqoB9Q=

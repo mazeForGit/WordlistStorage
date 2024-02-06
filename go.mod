@@ -1,12 +1,10 @@
-module mazeForGit/WordlistStorage
+module github.com/mazeForGit/WordlistStorage
 
-go 1.21.6
+go 1.21.4
 
 require (
 	github.com/gin-contrib/static v0.0.1
 	github.com/gin-gonic/gin v1.9.1
-	github.com/mazeForGit/Wordlist v0.0.0-20200104095825-01e9638465ab
-	github.com/mazeForGit/WordlistStorage v0.0.0-20200126162504-57f43bb1d8c9
 	github.com/sirupsen/logrus v1.9.3
 )
 
