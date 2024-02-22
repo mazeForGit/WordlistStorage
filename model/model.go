@@ -30,6 +30,7 @@ type SessionStatus struct {
 	ExecutionStarted bool `json:"executionstarted"`
 	ExecutionFinished bool `json:"executionfinished"`
 	WordsScanned int `json:"wordsscanned"`
+	PdfsScanned int `json:"pdfsscanned"`
 }
 type Test struct {
     Name  string	`json:"name"`
@@ -372,6 +373,11 @@ func AddWordsToStorage(test string, domain string, wrds []Word) {
 	
 	AddWordListToStorage(wl)
 }
+//
+// add wordlist to storage
+//	if exist than replace
+//	the match is on Session.DomainsAllowed
+//
 func AddWordListToStorage(wl WordList) {
 	fmt.Println("AddWordListToStorage.. len(wl.Words) = " + strconv.Itoa(len(wl.Words)))
 	
@@ -380,9 +386,11 @@ func AddWordListToStorage(wl WordList) {
 	}
 	// insert into storage
 	// replace if present
+	var sID int
 	for i := 0; i < len(GlobalWordListStorage); i++ {
 		if GlobalWordListStorage[i].Session.DomainsAllowed == wl.Session.DomainsAllowed {
 			// remove results
+			sID = GlobalWordListStorage[i].Session.SessionID
 			RemoveWordListResultsFromGlobalWordList(GlobalWordListStorage[i].Words)
 			
 			// Remove the element at index i from wl
@@ -391,6 +399,10 @@ func AddWordListToStorage(wl WordList) {
 			break;
 		}
 	}
+	if sID == 0 {
+		sID = len(GlobalWordListStorage) + 1
+	}
+	wl.Session.SessionID = sID
 	GlobalWordListStorage = append(GlobalWordListStorage, wl)
 	
 	// add at GlobalWordList

@@ -17,11 +17,12 @@ func main() {
 
 	//
 	// define and handle flags
-	var flagServerName = flag.String("name", "server", "server name")
+	var flagServerName = flag.String("name", "wordListStorage", "server name")
 	var flagServerPort = flag.String("port", "6001", "server port")
 	var fileConfig = flag.String("frConfig", "./data/config.json", "file containing config")
 	var fileWordList = flag.String("frWL", "./data/wordList.json", "file containing wordList")
-	var fileWordListStorage = flag.String("frWLS", "./data/wordListStorage.json", "file containing wordListStorage")
+	//var fileWordListStorage = flag.String("frWLS", "./data/wordListStorage.json", "file containing wordListStorage")
+	var fileWordListStorage = flag.String("frWLS", "", "file containing wordListStorage")
 	flag.Parse()
 	
 	//
